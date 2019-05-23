@@ -1,0 +1,11 @@
+.metadata
+*.[oa]
+/target/
+.project
+.classpath
+.settings
+*weekly*
+*.iml
+.idea
+target
+.mvn
