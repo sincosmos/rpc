@@ -16,16 +16,15 @@ public class SocketServer {
         int port = 4444;
         System.out.println("Waiting on port: " + port + "...");
         boolean listening = true;
-        int i = 1;
         try {
             ServerSocket serverSocket = new ServerSocket(port);
             while(listening){
-                /* Wait for the client to make a connection and when it does,
+                /* Wait for the client to make a connection (blocks) and when it does,
                 create a new socket to handle the request */
                 Socket socket = serverSocket.accept();
-                System.out.println(i++ + "connected");
 
-                try{
+                //服务器单线程处理客户端连接
+                /*try{
                     PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                     BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
@@ -35,13 +34,16 @@ public class SocketServer {
                         out.println(response);
                         if("Done".equals(request)) break;
                     }
-                    socket.close();
                 } catch (IOException e) {
                     e.printStackTrace();
-                }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    socket.close();
+                }*/
 
                 //Handle each connection in a new thread to manage concurrent users
-                /*new Thread(()->{
+                new Thread(()->{
                     try{
                         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -56,7 +58,7 @@ public class SocketServer {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                }).start();*/
+                }).start();
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -1,15 +1,12 @@
 # RPC 学习笔记
 * 相关标签 Socket, Java NIO, Netty, Zookeeper, Dubbo
 RPC 全称为 Remote Procedure Call，即远程过程调用，它是一个计算机通信协议。它允许像调用本地服务一样调用远程服务，主要应用在分布式系统。RPC 框架
-从实现角度看，一个 RPC 框架需要考虑以下几个方面。
+从实现角度看，一个 RPC 框架需要考虑以下几个方面
 1) 通信模型，在 Java 中一般基于 BIO 或 NIO;
 2) 过程（服务）定位，即在目标机器（给定 IP 和端口）上找到被调用的方法；
 3) 远程代理，在 Java 中使用动态代理实现；
 4) 序列化，例如 protobuf, Arvo 等
 
-## Socket
-1. TCP/IP 是传输层的一种通信协议；Socket 是传输层通信协议的抽象实现，提供 bind, listen, accept 等标准 API；基于 Sokcet 可以用来实现 TCP/IP 协议，也可以用来实现 UDP 协议等传输层通信协议。
-2. 一个服务器的 ServerSocket 监听一个端口的客户端连接请求，可以同时支持多个客户端连接。ServerSocket 的 accept() 方法会返回一个代表了当前客户端连接
 
 ## Java NIO
 1. NIO 主要使用 channels and buffers 进行读写服务
@@ -66,5 +63,20 @@ RPC 全称为 Remote Procedure Call，即远程过程调用，它是一个计算
 10. Java NIO Selector 用于检查一个或多个 NIO Channel 的状态是否处于可读、可写。如此可以实现单线程管理多个非阻塞的 Channel 
    （因此 FileChannel 不适用 Selector，因为它不能切换为非阻塞模式。FileChannel 不支持非阻塞的原因是 Unix 操作系统本身不支持文件的非阻塞IO)，
     也就是可以管理多个网络连接 SocketChannel（单线程 IO 多路复用）。
+    
+    
+## Socket
+1. TCP/IP 是传输层的一种通信协议；Socket 是传输层通信协议的抽象实现，提供 bind, listen, accept 等标准 API；基于 Sokcet 可以用来实现 TCP/IP 协议，也可以用来实现 UDP 协议等传输层通信协议
+2. Java 网络编程的 API 主要有基于 Blocking I/O 的 Socket/ServerSocket (TCP), DatagramSocket (UDP)，和基于 NIO 的 SocketChannel/ServerSocketChannel (TCP), DatagramChannel (UDP)
+3. Socket/ServerSocket 工作流程
+1) Client 单线程 - Server 单线程
+   Server 借助 ServerSocket 来实现一个服务器，也即开启一个线程监听某一个端口；客户端线程生成 Socket 实例向服务器发起连接请求（直到连接成功或失败才继续），成功后，客户端县城基于该 Socket 实例的 getOutputStream() 来向服务器写数据，基于 getInputStream() 读取服务器返回的数据；服务器端线程接受到客户端的连接请求后，会生成一个对应该连接的 Socket，并且同样基于该 Socket 实例的输入/输出流读取客户端发送来的数据或向客户端返回数据
+2）Client 多线程 - Server 单线程
+	如果客户端启动了多个线程生成多个 Socket 实例同时向服务器发起连接请求，客户端主线程在生成这些 Socket 实例时，会为它们分配不同的客户端端口（端口也可以指定，但必须保证同时处于连接状态的 client ip, client port, server ip, server port 的组合是唯一的，这里由于 client ip, server ip, server port 都是相同的，就只能使 client port 不同了）。此时，假设服务器端是单线程处理（实际中一般不会这样）所有的客户端连接的，那么服务器端线程会依次产生对应每个客户端线程连接的 Socket，并且基于 Socket 实例的输入/输出流读取客户端发送来的数据或向客户端返回数据，完成后再为下一个客户端线程连接请求产生新的 Socket（如果此时客户端线程尚未等待超时），进行相应的操作。
+3）Client 多线程 - Server 固定线程
+  Client 多线程和 2) 中描述一致。Server 多线程如果不限制线程数的话，就可以在与每个客户端线程建立连接后，立即将服务器端产生的 Socket 的交给新的线程处理。但一般情况下，为了防止服务器端压力过大，都会限制服务器端并发处理的连接数量，可以使用线程池来处理客户端连接。
+相关代码可以参见 com.sincosmos.rpc.rpcserver.socketserver.SocketServer 和 com.sincosmos.rpc.rpcclient.ioclient.SocketClient
+4. SocketChannel/ServerSocketChannel 工作流程
+   和上述基于 BIO 的 Socket/ServerSocket 相比，基于 NIO 的 SocketChannel/ServerSocketChannel TCP 网络通信最大优势是它允许服务器端将许多客户端连接交给一个 Selector 管理，从而使用一个线程管理多个客户端连接。
     
 ## Netty
