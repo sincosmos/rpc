@@ -11,18 +11,13 @@
     </parent>
 
     <groupId>com.sincosmos</groupId>
-    <artifactId>rpc-client</artifactId>
-    <packaging>jar</packaging>
+    <artifactId>netty-client</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-    
+    <dependencies>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+        </dependency>
+    </dependencies>
 </project>

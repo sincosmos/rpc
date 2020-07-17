@@ -20,19 +20,27 @@
 		<module>common</module>
 		<module>rpc-server</module>
 		<module>rpc-client</module>
+		<module>netty-server</module>
+		<module>netty-client</module>
 	</modules>
 
 	<properties>
 		<java.version>1.8</java.version>
 		<zookeeper.version>3.4.14</zookeeper.version>
 		<dubbo.version>2.0.0</dubbo.version>
-		<netty.version>4.1.36.Final</netty.version>
+		<netty.version>4.1.49.Final</netty.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
 		</dependency>
 
 		<dependency>
@@ -54,20 +62,21 @@
 				<groupId>org.apache.zookeeper</groupId>
 				<artifactId>zookeeper</artifactId>
 				<version>${zookeeper.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>io.netty</groupId>
+						<artifactId>netty</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>io.netty</groupId>
 				<artifactId>netty-all</artifactId>
 				<version>${netty.version}</version>
 			</dependency>
-
-			<dependency>
-				<groupId>org.projectlombok</groupId>
-				<artifactId>lombok</artifactId>
-				<optional>true</optional>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
 
 
 	<!--多模块项目，仅仅需要在启动类所在模块添加打包插件，不能在父类中添加打包插件-->

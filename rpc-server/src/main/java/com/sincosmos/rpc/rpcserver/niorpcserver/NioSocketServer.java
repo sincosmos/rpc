@@ -46,6 +46,7 @@ public class NioSocketServer {
         while(true){
             // wait for ready events
             // ready for connection, ready for reading, ready for writing
+            // if no events ready, blocks here to save cpu
             if(selector.select() == 0) continue;
             Set<SelectionKey> selectKeys = selector.selectedKeys();
             Iterator<SelectionKey> iter = selectKeys.iterator();
@@ -71,7 +72,6 @@ public class NioSocketServer {
                     while(buffer.hasRemaining()){
                         System.out.print((char)buffer.get());
                     }
-
 
                 }else if(selectionKey.isWritable()){
                     SocketChannel client = (SocketChannel) selectionKey.channel();
