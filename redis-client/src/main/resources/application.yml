@@ -1,0 +1,16 @@
+server:
+  port: 10802
+  tomcat:
+    uri-encoding: UTF-8
+    accesslog:
+      enabled: false
+
+spring:
+  application:
+    name: redis-client
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    timeout: 500
+  log:
+    level: info

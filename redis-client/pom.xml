@@ -11,17 +11,26 @@
     </parent>
 
     <groupId>com.sincosmos</groupId>
-    <artifactId>netty-client</artifactId>
+    <artifactId>redis-client</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
-            <artifactId>netty-transport</artifactId>
+            <artifactId>netty-all</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
