@@ -23,6 +23,10 @@
 		<module>netty-server</module>
 		<module>netty-client</module>
 		<module>redis-client</module>
+		<module>rpc-registry</module>
+		<module>rpc-rmi-server</module>
+		<module>rpc-rmi-client</module>
+		<module>rpc-rmi-api</module>
 	</modules>
 
 	<properties>
